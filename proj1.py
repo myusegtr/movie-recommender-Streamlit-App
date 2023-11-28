@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import seaborn as sns
+import numpy as np
 
 #1. Title and Subheader
 st.title("Data Analysis movie recommender system")
@@ -92,9 +93,9 @@ if upload is not None:
 if upload is not None:
     if st.checkbox("Find & remove duplicate rows"):
         st.text("Find Duplicates")
-        st.write(sum(data.duplicated))
+        st.write(sum(data.duplicated()))
         st.text("Removing duplicates")
-        st.write(data.drop_duplicates(inplace=True))
+        data.drop_duplicates(inplace=True)
         st.text("Shape of dataset after removing duplicate rows")
         st.write(data.shape)
 
@@ -189,19 +190,28 @@ if upload is not None:
 #Now visualizing the data
 
 # Split actors into individual names
+import numpy as np
+
 if upload is not None:
     if st.checkbox("Actors_list"):
        actor_lists = data['actors'].str.split('|')
        st.write(actor_lists)
-       # # Flatten the lists of actors
+       
+       # Flatten the lists of actors
        all_actors = [actor for sublist in actor_lists for actor in sublist]
-       # # Create a DataFrame with actor counts
+       
+       # Create a DataFrame with actor counts
        actor_counts = pd.Series(all_actors).value_counts().reset_index()
-       # # Rename columns for clarity
+       
+       # Rename columns for clarity
        actor_counts.columns = ['Actor', 'MovieCount']
-       # # Display the top 20 actors
+       
+       # Display the top 20 actors
        top_20_actors = actor_counts.head(20)
        st.write(top_20_actors)
+       
+       # Create a bar chart for the top 20 actors
+       st.bar_chart(top_20_actors.set_index('Actor'))
 
 
 #########################################################################################################
