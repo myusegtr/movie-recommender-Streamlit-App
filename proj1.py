@@ -107,13 +107,22 @@ if upload is not None:
         st.write(data['release_date'].head(5))
 
 #Dropping unwanted columns
+# if upload is not None:
+#     if st.checkbox("Drop columns"):
+#         st.text("Dropping some unwanted columns")
+#         st.write(data.drop(['tagline','wins_nominations'],axis=1,inplace=True))
+#         st.write(data.shape)
+#         sns.heatmap(data.isnull())
+#         st.pyplot()
+
 if upload is not None:
     if st.checkbox("Drop columns"):
         st.text("Dropping some unwanted columns")
-        st.write(data.drop(['tagline','wins_nominations'],axis=1,inplace=True))
+        st.write(data.drop(['title','is_adult'],axis=1,inplace=True))
         st.write(data.shape)
         sns.heatmap(data.isnull())
         st.pyplot()
+
 
 # Dropping some unwanted rows
 if upload is not None:
@@ -212,6 +221,58 @@ if upload is not None:
        
        # Create a bar chart for the top 20 actors
        st.bar_chart(top_20_actors.set_index('Actor'))
+
+# Movie count year wise
+if upload is not None:
+    if st.checkbox("Movie count year wise"):
+        st.text("year vs movie_count")
+        movie_count_per_year=data['year_of_release'].value_counts().reset_index()
+        movie_count_per_year.columns=['year_of_release', 'movie_count']
+        st.write(movie_count_per_year)
+        st.bar_chart(movie_count_per_year.set_index('year_of_release'))
+
+# Movie count genre wise
+if upload is not None:
+    if st.checkbox("Movie count genre wise"):
+        st.text("genre vs movie_count")
+        movie_count_by_genre = data['genres'].value_counts().reset_index()
+        movie_count_by_genre.columns=['genres', 'movie_count']
+        st.text("finding popular genre by movie count")
+        st.write(movie_count_by_genre)
+        st.bar_chart(movie_count_by_genre.set_index('genres'))
+
+#some data processing
+if upload is not None:
+    if st.checkbox("Max & Min movie runtime/length"):
+        # max_runtime_index = data['runtime'].idxmax()
+        # st.write(data.loc[max_runtime_index])
+        # st.text("Record with min runtime")
+        # min_runtime_index = data['runtime'].idxmin()
+        # st.write(data.loc[min_runtime_index])
+        default_value=90
+        data['runtime'] = pd.to_numeric(data['runtime'], errors='coerce').fillna(default_value).astype(int)
+        max=data['runtime'].astype(int).max()
+        min=data['runtime'].astype(int).min()
+        st.text("Record with max runtime")
+        st.write(data[data['runtime']==max])
+        st.text("Record with min runtime")
+        st.write(data[data['runtime']==min])
+
+     
+# Line chart for finding relation between rating & imdb votes
+if upload is not None:
+    if st.checkbox("Finding some relation between movie rating & Imdb votes"):
+       st.text("rating vs votes")
+       st.line_chart(data[['imdb_rating','imdb_votes']])
+     
+
+if upload is not None:
+    if st.checkbox("dropping rows with null values"):
+       st.text("Shape of dataset before dropping rows") 
+       st.write(data.shape)
+       st.text("shape of dataset after dropping certain rows")    
+       data.dropna(inplace=True)
+       st.write(data.shape)
 
 
 #########################################################################################################
